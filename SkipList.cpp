@@ -67,12 +67,23 @@ SkipList::SkipList(std::vector<int64_t> const & init)
 Node & search(int64_t value)
 {
   Node temp = nodeH;
-  for (int i = maxLevel; i > 0; i--)
+  for (int i = maxLevel; i >= 0; i--)
   {
-    while (temp.getValue() <= value)
+    // nodeT MUST be infinity, nodeH MUST be -infinity.
+    // Create custom comparators.
+    while ((*temp.getNext(i)).getValue() <= value)
     {
-      temp = temp.getNext(i - 1);
+      temp = *temp.getNext(i);
     }
   }
   return temp;
+}
+
+// First: Search, store found node as variable.
+// If found node == inserting node, end.
+// Else, update inserting node's pointers to found node's pointers,
+// Update found node's pointers to inserting node.
+void addNode(Node node)
+{
+
 }
