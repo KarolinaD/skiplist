@@ -52,7 +52,6 @@ SkipList::SkipList(std::vector<int64_t> const & init)
   // randomly get its level height, create pointers for this node at each level,
   // update pointers for previous elements at each level.
   // we can't add a new level if we are maxLevel + 1
-  //hi
   for (int64_t element : init)
   {
     uint64_t levels = std::rand() % maxLevel + 1;
