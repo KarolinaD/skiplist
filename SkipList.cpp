@@ -32,6 +32,11 @@ struct Node
   {
     return value;
   }
+
+  int64_t getLevels()
+  {
+      return pointers.size();
+  }
 };
 
 Node nodeH{};
@@ -63,16 +68,16 @@ SkipList::SkipList(std::vector<int64_t> const & init)
   }
 }
 
-Node & search(int64_t value)
+Node & search(Node & target)
 {
-  Node temp = nodeH;
+  Node & temp = nodeH;
   for (int i = maxLevel; i >= 0; i--)
   {
     // nodeT MUST be infinity, nodeH MUST be -infinity.
     // Create custom comparators.
-    while ((*temp.getNext(i)).getValue() <= value)
+    while (temp.getNext(i) <= target)
     {
-      temp = *temp.getNext(i);
+      temp = temp.getNext(i);
     }
   }
   return temp;
@@ -82,7 +87,50 @@ Node & search(int64_t value)
 // If found node == inserting node, end.
 // Else, update inserting node's pointers to found node's pointers,
 // Update found node's pointers to inserting node.
-void addNode(Node node)
+// Returns true if node was sucessfully added, false otherwise.
+boolean addNode(Node & node)
 {
+    Node & prevNode = search(node);
+    if (prevNode == node) return false;
 
+    for (int i = 0; i <= prevNode.getLevels(); i++)
+    {
+        node.changePointer(prevNode.getNext(i), i);
+    }
+    for (int i = prevNode.getLevels() + 1; i <= node.getLevels; i++)
+    {
+        node.changePointer(nodeT)
+    }
+}
+
+bool operator== (const Node &n1, const Node &n2)
+{
+    return (n1.getValue() == n2.getValue());
+}
+
+bool operator!= (const Node &n1, const Node &n2)
+{
+    return !(n1 == n2);
+}
+
+bool operator< (const Node &n1, const Node &n2)
+{
+    if (n1 == nodeH || n2 == nodeT) return true;
+    if (n2 == nodeH || n1 == nodeT) return false;
+    return (n1.getValue() < n2.getValue());
+}
+
+bool operator> (const Node &n1, const Node &n2)
+{
+    return !(n1 < n2 || n1 == n2);
+}
+
+bool operator<= (const Node &n1, const Node &n2)
+{
+    return (n1 < n2 || n1 == n2);
+}
+
+bool operator>= (const Node &n1, const Node &n2)
+{
+    return (n1 > n2 || n1 == n2);
 }
