@@ -1,18 +1,17 @@
 #define SKIPLIST_H
 
 struct Node
-// an object representing an element in the list
+// represents an element in the list
 {
   int64_t value{};
   std::vector<Node> pointers;
   char id{};
 
   void changePointer(Node node, uint64_t level)
-  // add/change a pointer to <node> at <level> to this node's pointers vector
+  // change this node's pointer at <level> to point to <node>
   {
     if (level <= pointers.size() - 1)
-    // if a pointer we want to change is on a smaller level
-    // than this node's max level
+    // if a pointer we want to change is on a smaller level than this node's max level
     {
       pointers.at(level) = node;
     }
@@ -26,6 +25,7 @@ struct Node
   }
 
   Node getNext(uint64_t level)
+  // get this node's pointer node from <level>
   {
     return pointers.at(level);
   }
@@ -41,6 +41,7 @@ struct Node
   }
 
   uint64_t getLevels()
+  // get the max level of this node
   {
       return pointers.size();
   }
@@ -83,12 +84,20 @@ class SkipList
 private:
   Node nodeH;
   Node nodeT;
+  // header and tail nodes
   uint64_t maxLevel;
+  // current max level of the list
   uint64_t size;
+  // current number of elements in the list
 
   Node makeNode(int64_t value, std::vector<Node> pointers, char id = '\0');
+  // construct a node with <value>, <pointers> vector consisting of this node's
+  // pointer nodes, and default id
   uint64_t randLevels();
+  // get a random number of levels (between 1 and maxLevel) for a new node
   std::vector<Node> search(Node & target);
+  // get a path from header node at the highest level to our target node
+  // at the lowest level (if exists)
 
 public:
   bool find(int64_t const x);
