@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cstdint>
 #include <iterator>
+#include <experimental/random>
+#include <iostream>
 #include "SkipList.h"
 
 Node nodeH{};
@@ -16,10 +18,10 @@ Node SkipList::makeNode(int64_t value, std::vector<Node> pointers, char id)
   return node;
 }
 
-uint64_t SkipList::randLevels()
+/*uint64_t SkipList::randLevels()
 {
-  return (std::rand() % maxLevel) + 1;
-}
+  return (std::experimental::randint(1, maxLevel);
+}*/
 
 SkipList::SkipList(std::vector<int64_t> const & init)
 {
@@ -36,9 +38,11 @@ std::vector<Node> SkipList::search(Node & target)
 {
   Node temp = nodeH;
   std::vector<Node> path;
+  //std::cout << maxLevel << '\n';
   for (int i = maxLevel; i >= 0; i--)
   // we start searching for a target node from the highest level
   {
+    std::cout << maxLevel << '\n';
     while (temp.getNext(i) <= target)
     // if temp node's pointer node at i-th level is smaller than target node
     {
@@ -53,7 +57,8 @@ std::vector<Node> SkipList::search(Node & target)
 
 bool SkipList::find(int64_t const x)
 {
-  std::vector<Node> pointers(randLevels());
+  std::vector<Node> pointers(4);
+  //std::vector<Node> pointers(randLevels());
   Node node = makeNode(x, pointers);
   return search(node).back() == node;
 }
@@ -65,7 +70,8 @@ bool SkipList::insert(int64_t const x)
 // update path's nodes' pointers to inserting node;
 // we can't add a new level if we are maxLevel + 1.
 {
-    std::vector<Node> pointers(randLevels());
+    std::vector<Node> pointers(4);
+    //std::vector<Node> pointers(randLevels());
     Node node = makeNode(x, pointers);
     std::vector<Node> path = search(node);
     Node temp = path.back();
@@ -73,7 +79,7 @@ bool SkipList::insert(int64_t const x)
     if (temp == node) return false;
     // if inserting node already exists in the list
 
-    for (int i = path.size(); i >= 0; i--)
+    for (int i = path.size() - 1; i >= 0; i--)
     // the last element in path is the node at the bottom - at 0th level
     {
         node.changePointer(path.at(i).getNext(levelCounter), levelCounter);
@@ -84,11 +90,11 @@ bool SkipList::insert(int64_t const x)
         // the inserting node at <levelCounter>
         levelCounter++;
     }
-    if (node.getLevels() == maxLevel)
+    if (node.getLevels() >= maxLevel)
     // we always have an 'abstract' level at the top which consists of
     // header and tail nodes only; header node has a pointer to tail node
     {
-      maxLevel++;
+      maxLevel = node.getLevels() + 1;
       nodeH.changePointer(nodeT, maxLevel);
     }
     size++;
@@ -97,7 +103,8 @@ bool SkipList::insert(int64_t const x)
 
 bool SkipList::remove(int64_t const x)
 {
-  std::vector<Node> pointers(randLevels());
+  std::vector<Node> pointers(4);
+  //std::vector<Node> pointers(randLevels());
   Node node = makeNode(x, pointers);
   std::vector<Node> path = search(node);
   Node temp = path.back();

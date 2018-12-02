@@ -93,7 +93,7 @@ private:
   Node makeNode(int64_t value, std::vector<Node> pointers, char id = '\0');
   // construct a node with <value>, <pointers> vector consisting of this node's
   // pointer nodes, and default id
-  uint64_t randLevels();
+  //uint64_t randLevels();
   // get a random number of levels (between 1 and maxLevel) for a new node
   std::vector<Node> search(Node & target);
   // get a path from header node at the highest level to our target node
