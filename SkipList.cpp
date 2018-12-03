@@ -42,10 +42,16 @@ std::vector<Node> SkipList::search(Node & target)
   for (int i = maxLevel; i >= 0; i--)
   // we start searching for a target node from the highest level
   {
-    std::cout << maxLevel << '\n';
+    std::cout << "search" << '\n';
+    std::cout << i << " i search" << '\n';
+    // HERE BELOW YOU CAN SEE THAT THE GETNEXT NODE IS A TAIL NODE
+    // AND HAS VALUE 0, BUT IS STILL REGARDED AS SMALLER THAN TARGET NODE
+    std::cout << temp.getNext(i).getID() << temp.getNext(i).getValue() << " getNext" << '\n';
+    std::cout << target.getValue() << " target" << '\n';
     while (temp.getNext(i) <= target)
     // if temp node's pointer node at i-th level is smaller than target node
     {
+      std::cout << "while search" << '\n';
       temp = temp.getNext(i);
     }
     path.push_back(temp);
@@ -73,15 +79,24 @@ bool SkipList::insert(int64_t const x)
     std::vector<Node> pointers(4);
     //std::vector<Node> pointers(randLevels());
     Node node = makeNode(x, pointers);
+    std::cout << "kupa" << '\n';
     std::vector<Node> path = search(node);
     Node temp = path.back();
     uint64_t levelCounter = 0;
     if (temp == node) return false;
     // if inserting node already exists in the list
 
+    std::cout << path.size() << " path size" << '\n';
     for (int i = path.size() - 1; i >= 0; i--)
     // the last element in path is the node at the bottom - at 0th level
     {
+      std::cout << "1st iteration" << '\n';
+      std::cout << i << " i" << '\n';
+      std::cout << levelCounter << " levelCounter" << '\n';
+      std::cout << pointers.size() << " pointers size" << '\n';
+      if (levelCounter < pointers.size())
+      {
+        //std::cout << i << levelCounter << '\n';
         node.changePointer(path.at(i).getNext(levelCounter), levelCounter);
         // change inserting node's pointer to the pointer of the i-th node
         // from the path at <levelCounter>
@@ -89,14 +104,26 @@ bool SkipList::insert(int64_t const x)
         // change the pointer of i-th node from the path to point to
         // the inserting node at <levelCounter>
         levelCounter++;
+      }
     }
+
     if (node.getLevels() >= maxLevel)
     // we always have an 'abstract' level at the top which consists of
     // header and tail nodes only; header node has a pointer to tail node
     {
+      for (unsigned int i = node.getLevels() - 1; i > maxLevel; i--)
+      {
+        std::cout << "2nd iteration" << '\n';
+        std::cout << i << " i" << '\n';
+        std::cout << node.getLevels() << " node.getLevels()" << '\n';
+        std::cout << maxLevel << " maxLevel" << '\n';
+        nodeH.changePointer(nodeT, i);
+      }
       maxLevel = node.getLevels() + 1;
-      nodeH.changePointer(nodeT, maxLevel);
+      std::cout << maxLevel << " maxLevel after 2nd iteration" << '\n';
     }
+    //std::cout << node.getLevels() << maxLevel << '\n';
+    //std::cout << node.getLevels() << maxLevel << '\n';
     size++;
     return true;
 }
